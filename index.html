@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electron Notes App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h3>Saved Notes</h3>
+            <ul id="notesList"></ul>
+        </aside>
+        <main class="main-content">
+            <textarea id="noteArea" placeholder="Write your note here..."></textarea>
+            <button onclick="saveCurrentNote()">Save Note</button>
+        </main>
+    </div>
+
+    <script>
+        const notesList = document.getElementById('notesList');
+        const noteArea = document.getElementById('noteArea');
+
+        function saveCurrentNote() {
+            const note = noteArea.value;
+            window.electronAPI.saveNote(note);
+            loadNotes();
+        }
+
+        async function loadNotes() {
+            const notes = await window.electronAPI.loadNotes();
+            notesList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const li = document.createElement('li');
+                li.textContent = `Note ${index + 1}`;
+                li.onclick = () => {
+                    noteArea.value = note;
+                };
+                notesList.appendChild(li);
+            });
+        }
+
+        loadNotes();
+    </script>
+</body>
+</html>
+
